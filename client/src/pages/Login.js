@@ -1,12 +1,15 @@
 import React from 'react';
-import LoginImage from '../assest/signin.gif';
+import LoginImage from '../assets/signin.gif';
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { useState,useEffect } from 'react';
+import backendApi from '../common/api.js';
+import { toast } from 'react-toastify';
+
 
 const Login = () => {
-
+    const navigate = useNavigate();
     const [data,setData]=useState({
         email:"",
         password:"",
@@ -28,10 +31,26 @@ const Login = () => {
         })
     };
 
-    const handleOnSubmit=(e)=>{
+    const handleOnSubmit=async(e)=>{
         e.preventDefault();
-        console.log("Form submitted",data);
-        
+        const  responseData=await fetch(backendApi.login.url,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+          }
+        );
+        const response=await responseData.json();
+        console.log(response);
+        if(response.success){
+          toast.success(response.message);
+          navigate('/dashboard');
+        }
+        else{
+          toast.error(response.message);
+        }        
     }
 
     const validateEmail = (email) => {

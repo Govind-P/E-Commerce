@@ -31,7 +31,8 @@ export const registerUser=async(req, res) =>{
             email,
             phone,
             password:hashedPassword,
-            profileImage
+            profileImage,
+            role:'GENERAL'
         });
         const savedUser =await newUser.save();
         res.status(201).json({message: "User registered successfully" ,

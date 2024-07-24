@@ -5,16 +5,32 @@ import jwt from 'jsonwebtoken';
 export const loginUser = async (req, res)=>{
     try{
         const {email,password}=req.body;
-        console.log(email, password)
         const users=await user.findOne({email:email});
-        if(!users){return res.status(400).json({msg : 'User doesnot exist. Please create an account!' })}
+        if(!users){return res.status(400).json({message : 'User doesnot exist. Please create an account!' })}
 
         const isMatch=await bcrypt.compare(password,users.password);
-        if(!isMatch){return res.status(400).json({msg : 'Invalid credential' })}
-
-        const token = jwt.sign({id:users._id},process.env.JWT_SECRET);
+        if(!isMatch){return res.status(400).json({message : 'Invalid credential' })}
+        const tokenData={
+            id:users._id,
+            email:users.email,
+        };
+        const token =await jwt.sign(tokenData,process.env.JWT_SECRET,{expiresIn: 60*60*8});
         delete users.password;
-        res.status(200).json({token,users});
+        const tokenOption={
+            httpOnly: true,
+            secure:true
+        }; 
+        res.cookie("token",token,tokenOption).status(200).json({
+            data:token,
+            user:users,
+            message : 'User logged in successfully!',
+            success:true,
+            error:false
+        });
 
-    }catch(err){res.status(500).json({error:err.message});}
+    }catch(err){res.status(500).json({
+        error:err.message,
+        success:false,
+        error:true
+    });}
 }

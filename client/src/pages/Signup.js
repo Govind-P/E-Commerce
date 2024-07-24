@@ -1,7 +1,13 @@
 import React, { useState,useEffect } from 'react';
-import LoginImage from '../assest/signin.gif';
-import { Link } from 'react-router-dom';
+import LoginImage from '../assets/signin.gif';
+import { Link ,useNavigate} from 'react-router-dom';
 import ImageToBase64 from '../helper/ImageToBase64';
+import backendApi from '../common/api.js';
+import { toast } from 'react-toastify';
+
+
+
+
 
 const Signup = () => {
   const [data,setData]=useState({
@@ -20,7 +26,7 @@ const Signup = () => {
     phone:'',
   });
   const [isButtonDisabled,setIsButtonDisabled]=useState(true);
-
+  const navigate=useNavigate();
 
   const handleOnChange=(e)=>{
     const {name,value}=e.target;
@@ -37,7 +43,6 @@ const Signup = () => {
   const handleUploadPic=async (e)=>{
     const file=e.target.files[0];
     const base64=await ImageToBase64(file);
-    console.log(base64);
     if(base64){
       setData((prev)=>{
         return (
@@ -50,7 +55,7 @@ const Signup = () => {
     }
   }
 
-  const handleOnSubmit=(e)=>{
+  const handleOnSubmit=async(e)=>{
     e.preventDefault();
     if(data.password!==data.confirmPassword){
       setErrors((prev)=>({
@@ -59,7 +64,26 @@ const Signup = () => {
       }))
     }
     else{
-      console.log(data);
+      try{
+        const response=await fetch(backendApi.signup.url,{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+        const responseData = await response.json();
+        console.log(responseData);
+        if (responseData.success) {
+          toast.success(responseData.message);
+          navigate('/login');
+        }
+        else{
+          toast.error(responseData.message);
+        }
+      }catch (error) {
+        alert(error);
+      }
     }
     
   }
