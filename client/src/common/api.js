@@ -8,6 +8,10 @@ const backendApi={
     login:{
         url: `${backendDomain}/api/login`,
         method: 'POST'
+    },
+    current_user:{
+        url:`${backendDomain}/api/user-details`,
+        method:'GET'
     }
 }
 

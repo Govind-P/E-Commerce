@@ -1,11 +1,10 @@
 import React from 'react';
 import LoginImage from '../assets/signin.gif';
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
 import { Link ,useNavigate} from 'react-router-dom';
-import { useState,useEffect } from 'react';
+import { useState,useContext,useEffect } from 'react';
 import backendApi from '../common/api.js';
 import { toast } from 'react-toastify';
+import context from '../context/index.js';
 
 
 const Login = () => {
@@ -19,6 +18,8 @@ const Login = () => {
         password:''
     });
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+    const {fetchUserData} = useContext(context);
 
 
     const handleOnChange=(e)=>{
@@ -36,6 +37,7 @@ const Login = () => {
         const  responseData=await fetch(backendApi.login.url,
           {
             method: 'POST',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },
@@ -45,8 +47,9 @@ const Login = () => {
         const response=await responseData.json();
         console.log(response);
         if(response.success){
-          toast.success(response.message);
+          toast.success("Welcome "+response.user.name);
           navigate('/dashboard');
+          fetchUserData();
         }
         else{
           toast.error(response.message);
@@ -94,7 +97,7 @@ const Login = () => {
   return (
     <section id='login'>
         <div className='mx-auto  p-12 bg-blue-100'>
-            <div className='bg-white px-8 py-7 max-w-md mx-auto '>
+            <div className='bg-white px-8 py-12 max-w-md mx-auto '>
                 <div className='w-20 h-20 mx-auto overflow-hidden rounded-full' >
                     <img src={LoginImage} alt='Login Icon' />
                 </div>

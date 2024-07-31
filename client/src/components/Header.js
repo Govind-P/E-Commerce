@@ -6,8 +6,10 @@ import { FaShoppingCart } from "react-icons/fa";
 import { IoMdLogOut } from "react-icons/io";
 import { IoMdLogIn } from "react-icons/io";
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
+  const user=useSelector(state=>state.user.user);
   return (
     <header className='h-16 shadow-md'>
       <div className=' h-full container mx-auto flex items-center px-4 justify-between'>
@@ -24,7 +26,11 @@ const Header = () => {
         </div>
         <div className='flex items-center gap-7'>
           <div className='text-3xl cursor-pointer'>
-            <FaRegUserCircle />
+            {
+              user?.profileImage? (<img className='w-10 h-10 rounded-full' src={user?.profileImage} alt={user?.name}/>)
+              : (<FaRegUserCircle />)
+            }
+            
           </div>
           <div className='text-2xl cursor-pointer relative'>
             <span><FaShoppingCart/></span>
