@@ -2,7 +2,7 @@ import user from '../model/userModel.js';
 
 export const userDetails=async(req,res)=>{
     try{
-        const User=await user.findById(req.body.user.id);
+        const User=await user.findById(req.data.id);
         if(!User){return res.status(404).json({
             message: 'User not found',
             error: true,

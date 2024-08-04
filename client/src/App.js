@@ -12,7 +12,9 @@ import { useDispatch } from 'react-redux';
 import { setUserDetails } from './store/userSlice.js';
 
 
+
 function App() {
+  
   const dispatch = useDispatch();
   const fetchUserData=async()=>{
     try {
